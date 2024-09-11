@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Formulario de Aprendizaje en ingles!</title>
+    <link rel="stylesheet" href="css/style.css"> 
+    <link rel="icon" href="images/3898082.png" type="image/x-icon">
+</head>
+
+<body>
+    <div class="menu-icon" onclick="toggleMenu()">☰</div>
+    <div class="menu" id="menu">
+        <a href="/">Home</a>
+        <a href="#">Vocabulary</a>
+        <a href="https://www.external-link.com/grammatic-learning" target="_blank">Grammatic Learning</a>
+        <a href="https://www.external-link.com/grammatic-dinamic" target="_blank">Grammatic Dinamic</a>
+        <a href="https://www.external-link.com/reading" target="_blank">Reading</a>
+        <a href="https://www.external-link.com/listening" target="_blank">Listening</a>
+        <a href="https://www.external-link.com/chatting" target="_blank">Chatting</a>
+        <a href="/form">Formulario</a>
+    </div>
+
+    <form id="additionalForm">
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="text" id="date" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="newWords">1. How many new words did you learn today?</label>
+            <div class="input-group">
+                <input type="number" id="newWords" min="0">
+                <button type="button" onclick="validateNewWords()">Validar</button>
+            </div>
+            <div class="resultsForm" id="resultsNewWords"></div>
+        </div>
+        <div class="form-group">
+            <label for="newWords">2 What were those words?</label>
+            <div class="input-group">
+                <ul id="tagList">
+                    <input type="text" spellcheck="false" id="tagInput">
+                </ul>
+                <button type="button" onclick="SaveNewWords()">Guardar</button>
+            </div>
+            <div class="resultsForm" id="SaveWords"></div>
+        </div>
+        <div class="form-group">
+            <label for="phrase">3. Give me a sentence with these words:</label>
+            <div class="input-group">
+                <input type="text" id="phrase">
+                <button type="button" id="validatePhraseBtn" onclick="validatePhrase()">Validar</button>
+            </div>
+            <div class="resultsForm" id="resultsPhrase"></div>
+            <div class="resultsForm" id="resultsPoints"></div>
+        </div>
+
+        <label for="comprehensionLevel">4. Read the following text</label>
+        <div class="info-text" id="story">
+
+        </div>
+
+        <div class="form-group">
+            <label for="comprehensionLevel">5. What was your level of understanding of the previous text?</label>
+            <div class="input-group">
+                <select id="comprehensionLevel">
+                    <option value="1">1 - Little comprehension (Understanding less than 10% of the words)</option>
+                    <option value="2">2 - Partial comprehension (Understanding less than 30% of the words)</option>
+                    <option value="3">3 - Moderate comprehension (Understanding more than 50% of the words)</option>
+                    <option value="4">4 - Good comprehension (Understanding more than 70% of the words)</option>
+                    <option value="5">5 - Excellent comprehension (Understanding more than 90% of the words)</option>
+                </select>
+                <button type="button" onclick="validateComprehension()">Validar</button>
+            </div>
+            <div class="resultsForm" id="ValidateOptions"></div>
+        </div>
+        <div class="form-group">
+            <label for="errorCorrection">6. Write about how you feel today:</label>
+            <div class="input-group">
+                <input type="text" id="errorCorrection">
+                <button type="button" id="validateMentalHealth" onclick="validateErrorCorrection()">Validar</button>
+            </div>
+            <div class="resultsForm" id="resultsErrorCorrection"></div>
+        </div>
+
+        <button type="submit" id="submitBtn">ENVIAR</button>
+
+        <div class="response" id="response"></div>
+    </form>
+    <script src="js/scripts_form.js"></script>
+</body>
+
+</html>
