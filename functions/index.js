@@ -37,9 +37,9 @@ exports.traduce = onRequest(async (req, res) => {
             }
             const user_message = req.body.message;
             const openaiResponse = await openai.createChatCompletion({
-                model: 'gpt-3.5-turbo-0125',
+                model: 'gpt-4o-mini',
                 messages: [
-                    { role: 'system', content: 'Proporciona la traducción o definición de la siguiente palabra o frase. Si está en inglés, tradúcela al español; si está en español, tradúcela al inglés.' },
+                    { role: 'system', content: '"Traduce o define la siguiente palabra o frase. Ofrece varias respuestas posibles sin contexto, ya que pueden tener diferentes significados. Si está en inglés, tradúcela al español; si está en español, al inglés.' },
                     { role: 'user', content: user_message }
                 ],
                 max_tokens: 60,
@@ -47,6 +47,60 @@ exports.traduce = onRequest(async (req, res) => {
             const assistant_reply = openaiResponse.data.choices[0]?.message?.content || 'No content';
             return res.status(200).json({ reply: assistant_reply });
         } catch {
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+    });
+});
+
+exports.validatePhrase = onRequest(async (req, res) => {
+    cors(req, res, async () => {
+        try {
+            if (req.method !== 'POST' || !req.body.message || !req.body.word) {
+                return res.status(400).json({ error: 'Invalid request' });
+            }
+
+            const userPhraseMessage = req.body.message;
+            const userWordMessage = req.body.word;
+            const systemMessage = `Valida que la siguiente frase contenga la(s) palabra(s): "${userWordMessage}". Verifica que la frase: "${userPhraseMessage}" tenga sentido con esa palabra, sea gramaticalmente correcta y no tenga errores ortográficos. Si cumple con estos criterios, corrígela si es necesario y tradúcela añadiéndola entre paréntesis.`;
+
+            const openaiResponse = await openai.createChatCompletion({
+                model: 'gpt-4o-mini',
+                messages: [
+                    { role: 'system', content: systemMessage },
+                    { role: 'user', content: userPhraseMessage }
+                ],
+                max_tokens: 70,
+            });
+
+            const assistant_reply = openaiResponse.data.choices[0]?.message?.content || 'No content';
+
+            return res.status(200).json({ reply: assistant_reply });
+        } catch (error) {
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+    });
+});
+
+exports.validateQuestion = onRequest(async (req, res) => {
+    cors(req, res, async () => {
+        try {
+            if (req.method !== 'POST' || !req.body.message) {
+                return res.status(400).json({ error: 'Invalid request' });
+            }
+
+            const userQuestionMessage = req.body.message;
+            const systemMessage = `Resuelve todas mis dudas sobre el aprendizaje del inglés, incluyendo gramática, ortografía, significado de palabras y expresiones. También ofrece consejos sobre las mejores maneras de aprender el idioma de manera efectiva y mejorar mi comprensión en diferentes contextos.`;
+            const openaiResponse = await openai.createChatCompletion({
+                model: 'gpt-4o-mini',
+                messages: [
+                    { role: 'system', content: systemMessage },
+                    { role: 'user', content: userQuestionMessage }
+                ],
+                max_tokens: 90,
+            });
+            const assistant_reply = openaiResponse.data.choices[0]?.message?.content || 'No content';
+            return res.status(200).json({ reply: assistant_reply });
+        } catch (error) {
             return res.status(500).json({ error: 'Internal Server Error' });
         }
     });
