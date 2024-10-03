@@ -30,37 +30,46 @@ document.getElementById("grammar-link-1").addEventListener("click", function () 
             }
         });
 
-        document.getElementById('sendButton').addEventListener('click', function (event) {
+        document.getElementById('sendButton').addEventListener('click', async (event) => {
             event.preventDefault();
-
+        
             const userInput = document.getElementById('my-input').value;
-
-            fetch('https://traduce-lkdliiflpq-uc.a.run.app', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ message: userInput })
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Datos recibidos:', data);
-                    if (data.error) {
-                        throw new Error(data.error);
-                    }
-                    document.getElementById('response').innerText = data.reply;
-                })                
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('response').innerText = 'Ocurrió un error. Inténtalo de nuevo.';
+        
+            try {
+                const response = await fetch('https://traduce-lkdliiflpq-uc.a.run.app', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userInput })
                 });
+        
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+        
+                const traduceWord = data.reply;
+                document.getElementById('response').innerText = traduceWord;
+                console.log(`Palabra: ${userInput} - Traducción: ${traduceWord}`);
+                const currentDateTime = new Date().toISOString();
+                const wordSaveEnglish = { Fecha: currentDateTime, Palabra: userInput, Traducción: traduceWord };
+        
+                const saveResponse = await fetch('https://savewords-lkdliiflpq-uc.a.run.app', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(wordSaveEnglish),
+                });
+        
+                const dataWord = await saveResponse.json();
+                document.getElementById('responseSave').innerText = 'Datos guardados.';
+                console.log('Success: ', dataWord);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('response').innerText = 'Ocurrió un error. Inténtalo de nuevo.';
+                document.getElementById('responseSave').innerText = 'Error. Revisa con soporte.';
+            }
         });
-
+        
+        
         document.getElementById('sendButtonPhrase').addEventListener('click', function(event) {
             event.preventDefault();
             const userInput = document.getElementById('my-input').value;

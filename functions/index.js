@@ -13,20 +13,24 @@ const openai = new OpenAIApi(configuration);
 
 initializeApp();
 
-exports.saveWords = onRequest(async (req, res) => {
-    try {
-        res.setHeader('Access-Control-Allow-Origin', 'https://i-need-to-adapt-to-english.web.app');
-        res.setHeader('Access-Control-Allow-Methods', 'POST');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-        const dataWord = req.body;
-        const writeResult = await getFirestore()
-            .collection("words_in_english_learned")
-            .add({ words: dataWord });
-        res.status(200).json({ message: 'Datos guardados correctamente', id: writeResult.id });
-    } catch (error) {
-        console.error('Error al guardar los datos:', error);
-        res.status(500).json({ message: 'Error al guardar los datos' });
-    }
+exports.saveWords = onRequest((req, res) => {
+    cors(req, res, async () => {
+        try {
+            if (req.method !== 'POST' || !req.body || Object.keys(req.body).length === 0) {
+                return res.status(400).json({ message: 'No se recibieron datos válidos' });
+            }
+
+            const dataWord = req.body;
+            const writeResult = await getFirestore()
+                .collection("words_in_english_learned")
+                .add(dataWord);
+
+            res.status(200).json({ message: 'Datos guardados correctamente', id: writeResult.id });
+        } catch (error) {
+            console.error('Error al guardar los datos:', error);
+            res.status(500).json({ message: 'Error al guardar los datos' });
+        }
+    });
 });
 
 exports.traduce = onRequest(async (req, res) => {
@@ -39,10 +43,10 @@ exports.traduce = onRequest(async (req, res) => {
             const openaiResponse = await openai.createChatCompletion({
                 model: 'gpt-4o-mini',
                 messages: [
-                    { role: 'system', content: '"Traduce o define la siguiente palabra o frase. Ofrece varias respuestas posibles sin contexto, ya que pueden tener diferentes significados. Si está en inglés, tradúcela al español; si está en español, al inglés.' },
+                    { role: 'system', content: 'Traduce o define la siguiente palabra o frase según su contexto. Si está en inglés, tradúcela al español; si está en español, al inglés. Proporciona otras posibles definiciones o traducciones según el contexto, sin usar introducciones innecesarias.' },
                     { role: 'user', content: user_message }
                 ],
-                max_tokens: 60,
+                max_tokens: 100,
             });
             const assistant_reply = openaiResponse.data.choices[0]?.message?.content || 'No content';
             return res.status(200).json({ reply: assistant_reply });
@@ -61,7 +65,7 @@ exports.validatePhrase = onRequest(async (req, res) => {
 
             const userPhraseMessage = req.body.message;
             const userWordMessage = req.body.word;
-            const systemMessage = `Valida que la siguiente frase contenga la(s) palabra(s): "${userWordMessage}". Verifica que la frase: "${userPhraseMessage}" tenga sentido con esa palabra, sea gramaticalmente correcta y no tenga errores ortográficos. Si cumple con estos criterios, corrígela si es necesario y tradúcela añadiéndola entre paréntesis.`;
+            const systemMessage = `Valida si la frase: '${userPhraseMessage}' contiene la(s) palabra(s): '${userWordMessage}'. Asegúrate de que sea gramaticalmente correcta y sin errores ortográficos. Si es necesario, corrige la frase y tradúcela, añadiendo la traducción entre paréntesis. Evita introducciones innecesarias.`;
 
             const openaiResponse = await openai.createChatCompletion({
                 model: 'gpt-4o-mini',
@@ -69,7 +73,7 @@ exports.validatePhrase = onRequest(async (req, res) => {
                     { role: 'system', content: systemMessage },
                     { role: 'user', content: userPhraseMessage }
                 ],
-                max_tokens: 70,
+                max_tokens: 100,
             });
 
             const assistant_reply = openaiResponse.data.choices[0]?.message?.content || 'No content';
@@ -96,7 +100,7 @@ exports.validateQuestion = onRequest(async (req, res) => {
                     { role: 'system', content: systemMessage },
                     { role: 'user', content: userQuestionMessage }
                 ],
-                max_tokens: 90,
+                max_tokens: 160,
             });
             const assistant_reply = openaiResponse.data.choices[0]?.message?.content || 'No content';
             return res.status(200).json({ reply: assistant_reply });
