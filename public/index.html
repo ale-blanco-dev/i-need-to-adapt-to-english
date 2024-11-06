@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>¡Aprendamos Ingles!</title>
@@ -17,102 +18,112 @@
     <script defer src="/__/firebase/10.13.1/firebase-remote-config-compat.js"></script>
     <script defer src="/__/firebase/10.13.1/firebase-performance-compat.js"></script>
     <script defer src="/__/firebase/init.js?useEmulator=true"></script>
-  </head>
-  <body>
+</head>
+
+<body>
     <div class="container">
-      <div class="title">¡Es momento de dominar el inglés!</div>
-      <div class="container">
-        <span class="title-traduce">Traduce aquí tu palabra: <span id="responseSave"></span> </span>
-          <form id="my-form">
-              <input type="text" id="my-input" placeholder="Escribe tu palabra aquí" required>
-              <button type="submit" id="sendButton">Enviar</button>
-          </form>
-          <div class="response" id="response"></div>
-      </div>
-      <div class="container">
-        <span class="title-traduce">Añade una frase acorde a la palabra que quieras aprender: </span>
-        <form id="my-form">
-            <input type="text" id="my-input-phrase" placeholder="Escribe tu frase aquí" required>
-            <button type="submit" id="sendButtonPhrase">Validar</button>
-        </form>
-        <div class="response" id="responsePhrase">
+        <div class="title">¡Es momento de dominar el inglés!</div>
+        <div class="container">
+            <span class="title-traduce">Traduce aquí tu palabra: <span id="responseSave"></span> </span>
+            <form id="my-form">
+                <input type="text" id="my-input" placeholder="Escribe tu palabra aquí" required>
+                <button type="submit" id="sendButton">
+                    <span>Enviar</span>
+                </button>
+
+            </form>
+            <div class="response" id="response"></div>
         </div>
-    </div>
-    <div class="container"></div>
+        <div class="container">
+            <span class="title-traduce">Añade una frase acorde a la palabra que quieras aprender: </span>
+            <form id="my-form">
+                <input type="text" id="my-input-phrase" placeholder="Escribe tu frase aquí" required>
+                <button type="submit" id="sendButtonPhrase"><span>Validar</span></button>
+            </form>
+            <div class="response" id="responsePhrase">
+            </div>
+        </div>
+        <div class="container"></div>
         <span class="title-traduce">¿Tienes alguna pregunta sobre el ingles? </span>
         <form id="my-form">
             <input type="text" id="my-input-question" placeholder="Escribe tu pregunta aquí" required>
-            <button type="submit" id="sendButtonQuestion">Preguntar</button>
+            <button type="submit" id="sendButtonQuestion"><span>Preguntar</span></button>
         </form>
         <div class="response" id="responseQuestion">
         </div>
     </div>
-      <div class="parent">
-          <div>
-            <a href="/anka">
-                  <img src="images/vocabulary-icon.jpg" alt="Imagen 1">
-                  <span class="text-overlay">Vocabulary</span>
-              </a>
-          </div>
-          <div>
-              <img src="images/busuu.png" alt="Imagen 2">
-              <a href="https://www.busuu.com/dashboard/timeline/a2" target="_blank">
-                  <span class="text-overlay">Grammatic Dinamic</span>
-              </a>
-              <span class="text-overlay" style="margin-bottom:42px;">
-                  <a href="#" id="grammar-link-1">Grammatic Learning</a>
-                  <select id="grammar-options-1" style="display:none;">
-                      <option value="">Seleccione una opción</option>
-                      <option value="https://learnenglish.britishcouncil.org/grammar/b1-b2-grammar">British Council
-                          Grammar</option>
-                      <option
-                          value="https://learnenglish.britishcouncil.org/english-levels/find-resources-your-level?field_taxonomy_vocabulary_1_target_id=1490">
-                          British Council Courses</option>
-                      <option
-                          value="https://www.cambridgeenglish.org/learning-english/activities-for-learners?skill=grammar&level=independent&rows=12">
-                          Cambridge English Learning</option>
-                      <option value="https://learning.edx.org/course/course-v1:UQx+Write101x+1T2023/home">Edx Course
-                      </option>
-                      <option value="https://youtu.be/vx1RZUfl6eQ?si=GddaeviZ_i6nRPSL">Youtube Learning</option>
-                  </select>
-              </span>
-          </div>
+    <div class="parent">
+        <div>
+            <img src="images/vocabulary-icon.jpg" alt="Imagen 1">
+            <span class="text-overlay" style="margin-bottom:42px;">
+                <a id="grammar-link-vocabulary">Vocabulary</a>
+                <select id="grammar-options-vocabulary" style="display:none;">
+                    <option value="">Seleccione una opción</option>
+                    <option value="/anka">Reminder Vocabulary</option>
+                    <option value="https://ankiuser.net/study">Vocabulary Learning</option>
+                </select>
+            </span>
+        </div>
+        <div>
+            <img src="images/busuu.png" alt="Imagen 2">
+            <a href="https://www.busuu.com/dashboard/timeline/a2" target="_blank">
+                <span class="text-overlay">Grammatic Dinamic</span>
+            </a>
+            <span class="text-overlay" style="margin-bottom:42px;">
+                <a href="#" id="grammar-link-1">Grammatic Learning</a>
+                <select id="grammar-options-1" style="display:none;">
+                    <option value="">Seleccione una opción</option>
+                    <option value="https://learnenglish.britishcouncil.org/grammar/b1-b2-grammar">British Council
+                        Grammar</option>
+                    <option
+                        value="https://learnenglish.britishcouncil.org/english-levels/find-resources-your-level?field_taxonomy_vocabulary_1_target_id=1490">
+                        British Council Courses</option>
+                    <option
+                        value="https://www.cambridgeenglish.org/learning-english/activities-for-learners?skill=grammar&level=independent&rows=12">
+                        Cambridge English Learning</option>
+                    <option value="https://learning.edx.org/course/course-v1:UQx+Write101x+1T2023/home">Edx Course
+                    </option>
+                    <option value="https://youtu.be/vx1RZUfl6eQ?si=GddaeviZ_i6nRPSL">Youtube Learning</option>
+                </select>
+            </span>
+        </div>
 
-          <div>
-              <a href="https://www.webtoons.com/en/romance/iseops-romance/list?title_no=5753" target="_blank">
-                  <img src="images/Webtoon_logo.png" alt="Imagen 3">
-                  <span class="text-overlay">Reading</span>
-              </a>
-          </div>
+        <div>
+            <a href="https://www.webtoons.com/en/romance/iseops-romance/list?title_no=5753" target="_blank">
+                <img src="images/Webtoon_logo.png" alt="Imagen 3">
+                <span class="text-overlay">Reading</span>
+            </a>
+        </div>
 
-          <div>
-              <img src="images/streaming.jpeg" alt="Imagen 4">
-              <span class="text-overlay" style="margin-bottom:42px;">
-                  <a href="#" id="grammar-link-2">Listening</a>
-                  <select id="grammar-options-2" style="display:none;">
-                      <option value="">Seleccione una opción</option>
-                      <option value="https://www.netflix.com/us-es/">Netflix</option>
-                      <option value="https://www.max.com/co/es">HBO</option>
-                      <option value="https://www.paramountplus.com/">Paramount</option>
-                      <option value="https://www.disneyplus.com/">Disney</option>
-                      <option value="https://www.youtube.com/">Youtube</option>
-                  </select>
-              </span>
-          </div>
-          <div>
-              <a href="https://chatgpt.com/" target="_blank">
-                  <img src="images/chat.png" alt="Imagen 5">
-                  <span class="text-overlay">Chatting</span>
-              </a>
-          </div>
-          <div>
-              <a href="/form">
+        <div>
+            <img src="images/streaming.jpeg" alt="Imagen 4">
+            <span class="text-overlay" style="margin-bottom:42px;">
+                <a id="grammar-link-listening">Listening</a>
+                <select id="grammar-options-listening" style="display:none;">
+                    <option value="">Seleccione una opción</option>
+                    <option value="https://www.netflix.com/us-es/">Netflix</option>
+                    <option value="https://www.max.com/co/es">HBO</option>
+                    <option value="https://www.paramountplus.com/">Paramount</option>
+                    <option value="https://www.disneyplus.com/">Disney</option>
+                    <option value="https://www.youtube.com/">Youtube</option>
+                </select>
+            </span>
+        </div>
+        <div>
+            <a href="https://chatgpt.com/" target="_blank">
+                <img src="images/chat.png" alt="Imagen 5">
+                <span class="text-overlay">Chatting</span>
+            </a>
+        </div>
+        <div>
+            <a href="/form">
                 <img src="images/3898082.png" alt="Imagen 6" style="width: 100%; height: auto;">
                 <span class="text-overlay"> Evaluation Form </span>
-              </a>
-            </div>              
-      </div>
-  </div>
-  </body>
-  <script src="js/script.js"></script>
+            </a>
+        </div>
+    </div>
+    </div>
+</body>
+<script src="js/script.js"></script>
+
 </html>

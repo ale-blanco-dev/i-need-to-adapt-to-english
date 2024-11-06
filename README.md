@@ -14,6 +14,7 @@ Para ejecutar este proyecto necesitarás:
 - **Node.js** v14 o superior
 - **npm** v6 o superior
 - [Funciones de Firebase](https://firebase.google.com/docs/web/setup?hl=es-419)
+- [API Reference de OpenAI](https://platform.openai.com/docs/overview)
 
 ## Instalación
 

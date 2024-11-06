@@ -13,6 +13,7 @@ const openai = new OpenAIApi(configuration);
 
 initializeApp();
 
+
 exports.saveWords = onRequest((req, res) => {
     cors(req, res, async () => {
         try {
@@ -29,6 +30,29 @@ exports.saveWords = onRequest((req, res) => {
         } catch (error) {
             console.error('Error al guardar los datos:', error);
             res.status(500).json({ message: 'Error al guardar los datos' });
+        }
+    });
+});
+
+exports.getWords = onRequest((req, res) => {
+    cors(req, res, async () => {
+        try {
+            if (req.method !== 'GET') {
+                return res.status(400).json({ message: 'Método no soportado, debe ser GET' });
+            }
+
+            const wordsSnapshot = await getFirestore()
+                .collection("words_in_english_learned")
+                .get();
+            const wordsList = wordsSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            res.status(200).json({ words: wordsList });
+        } catch (error) {
+            console.error('Error al obtener los datos:', error);
+            res.status(500).json({ message: 'Error al obtener los datos' });
         }
     });
 });
@@ -100,7 +124,7 @@ exports.validateQuestion = onRequest(async (req, res) => {
                     { role: 'system', content: systemMessage },
                     { role: 'user', content: userQuestionMessage }
                 ],
-                max_tokens: 160,
+                max_tokens: 300,
             });
             const assistant_reply = openaiResponse.data.choices[0]?.message?.content || 'No content';
             return res.status(200).json({ reply: assistant_reply });
@@ -109,3 +133,5 @@ exports.validateQuestion = onRequest(async (req, res) => {
         }
     });
 });
+
+

@@ -48,11 +48,43 @@ button {
     color: var(--white);
     font-size: 1em;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.3s ease; /* Suaviza el cambio de color */
 }
 
-button:hover {
-    background-color: #5a2d9b;
+button.loading {
+    background-color: #ccc;
+    border-color:#ccc;
 }
+
+button.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #6f42c1; /* Color de llenado (morado) */
+    animation: fillWater 2s forwards; /* Cambié a 'forwards' para que mantenga el estado al finalizar */
+    z-index: 1;
+    transform: scaleY(0); /* Inicialmente colapsado en el eje Y */
+}
+
+button span {
+    position: relative;
+    z-index: 2; /* Asegura que el texto esté por encima */
+}
+
+@keyframes fillWater {
+    0% {
+        transform: scaleY(0); /* Colapsado al inicio */
+    }
+    100% {
+        transform: scaleY(1); /* Llenar completamente */
+    }
+}
+
 
 .response {
     margin-top: 20px;
@@ -98,20 +130,23 @@ button:hover {
     cursor: pointer;
 }
 
-#grammar-link-1,
-#grammar-link-2 {
+#grammar-link-vocabulary,
+#grammar-link-listening,
+#grammar-link-1 {
     cursor: pointer;
     color: var(--secondary-color);
     text-decoration: none;
 }
 
-#grammar-link-1:hover,
-#grammar-link-2:hover {
+#grammar-link-vocabulary:hover,
+#grammar-link-listening:hover,
+#grammar-link-1:hover {
     text-decoration: underline;
 }
 
-#grammar-options-1,
-#grammar-options-2 {
+#grammar-options-vocabulary,
+#grammar-options-listening,
+#grammar-options-1 {
     width: 100%;
     margin-top: 10px;
     padding: 10px;
@@ -120,7 +155,19 @@ button:hover {
     background-color: var(--background-color);
     color: var(--secondary-color);
     cursor: pointer;
+    display: none; 
 }
+
+#grammar-options-vocabulary.visible,
+#grammar-options-listening.visible,
+#grammar-options-1.visible {
+    display: block;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 1000;
+    position: relative;
+}
+
 
 .title-traduce {
     color: var(--secondary-color);
@@ -175,8 +222,8 @@ button:hover {
         padding: 8px;
     }
 
-    #grammar-options-1,
-    #grammar-options-2 {
+    #grammar-options-vocabulary,
+    #grammar-options-listening {
         padding: 8px;
     }
 }
