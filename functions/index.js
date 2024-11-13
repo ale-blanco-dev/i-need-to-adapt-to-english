@@ -80,7 +80,7 @@ exports.traduce = onRequest(async (req, res) => {
     });
 });
 
-exports.validatePhrase = onRequest(async (req, res) => {
+exports.isThePhraseContainAWord = onRequest(async (req, res) => {
     cors(req, res, async () => {
         try {
             if (req.method !== 'POST' || !req.body.message || !req.body.word) {
@@ -134,4 +134,106 @@ exports.validateQuestion = onRequest(async (req, res) => {
     });
 });
 
+//Forms
 
+exports.isSentenceCorrectGrammar = onRequest(async (req, res) => {
+    cors(req, res, async () => {
+        try {            
+            const userQuestionPhrase = req.body.message;
+            const systemPhraseValidate = 'Correct the sentence for grammar and spelling. If the sentence is correct, reply with two point - espace - zero, like this : 0. Provide the corrected sentence and count all errors (grammar and spelling) accurately in the format: corrected sentence : number';
+            const openaiResponse = await openai.createChatCompletion({
+                model: 'gpt-4o-mini',
+                messages: [
+                    { role: 'system', content: systemPhraseValidate },
+                    { role: 'user', content: userQuestionPhrase }
+                ],
+                max_tokens: 100
+            }); 
+            const assistant_reply = openaiResponse.data.choices[0]?.message?.content || 'No content';
+            return res.status(200).json({ reply: assistant_reply });
+        } catch (error) {
+            const errorMessage = error.message ? error.message : 'Internal Server Error';
+            return res.status(500).json({ error: errorMessage });
+        }
+    });
+});
+
+exports.createStory = onRequest(async (req, res) =>{
+    cors(req, res, async() =>{
+        try{
+            if (req.method !== 'GET') {
+                return res.status(400).json({ message: 'Método no soportado, debe ser GET' });
+            }
+            const openaiResponse = await openai.createChatCompletion({
+                model: 'gpt-4o-mini',
+                messages: [
+                    { role: 'system', content: 'You are a master storyteller, adept at crafting engaging and concise narratives. Your expertise shines particularly with short texts with max 50 words.' },
+                    { role: 'user', content: 'Tell me a brief story in English, with perfect grammar and spelling. The story should be no longer than 50 tokens.' }
+                ],
+                max_tokens: 100
+            });
+            const assistant_story = openaiResponse.data.choices[0]?.message?.content;
+            return res.status(200).json({ reply: assistant_story })
+        } catch (error){
+            res.status(500).json({ message: 'Error al obtener los datos' });
+        }
+    });
+});
+
+exports.isHowFeelTodayOk = onRequest(async (req, res) =>{
+    cors(req, res, async() =>{
+        try{
+            userHowFeel = req.body.message;
+            const openaiResponse = await openai.createChatCompletion({
+                model: 'gpt-4o-mini',
+                messages: [
+                    { role: 'system', content: 'As an expert English teacher, correct grammar and spelling, and assess the users proficiency level (A1, A2, A3, A4). Provide concise feedback.' },
+                    { role: 'user', content: userHowFeel }
+                ],
+                max_tokens: 100
+            })
+            const assistant_howFeel = openaiResponse.data.choices[0]?.message?.content || 'No content';
+            return res.status(200).json({ reply: assistant_howFeel })
+        }catch(error){
+            const errorMessage = error.message ? error.message : 'Internal Server Error';
+            return res.status(500).json({ error: errorMessage });
+        }
+    })
+})
+
+exports.saveWords = onRequest((req, res) => {
+    cors(req, res, async () => {
+        try {
+            if (req.method !== 'POST' || !req.body || Object.keys(req.body).length === 0) {
+                return res.status(400).json({ message: 'No se recibieron datos válidos' });
+            }
+
+            const dataWord = req.body;
+            const writeResult = await getFirestore()
+                .collection("words_in_english_learned")
+                .add(dataWord);
+
+            res.status(200).json({ message: 'Datos guardados correctamente', id: writeResult.id });
+        } catch (error) {
+            console.error('Error al guardar los datos:', error);
+            res.status(500).json({ message: 'Error al guardar los datos' });
+        }
+    });
+});
+
+exports.resultsFormTotalLevelEnglish = onRequest((req, res) =>{
+    cors(req, res, async () =>{
+        try{
+            const dataWord = req.body;
+            const resultTotal = await getFirestore()
+                .collection("resultsTotalForm")
+                .add(dataWord);
+
+                res.status(200).json({ message: 'Datos guardados correctamente', id: resultTotal.id });
+
+        }catch (error){
+            console.error('Error al guardar los datos:', error);
+            res.status(500).json({ message: 'Error al guardar los datos' });
+        }
+    })
+})

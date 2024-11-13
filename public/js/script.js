@@ -91,7 +91,7 @@ document.getElementById('sendButtonPhrase').addEventListener('click', function (
     sendButtonPhraseButton.classList.add('loading');
     sendButtonPhraseButton.disabled = true;
 
-    fetch('https://validatephrase-lkdliiflpq-uc.a.run.app', {
+    fetch('https://isthephrasecontainaword-lkdliiflpq-uc.a.run.app', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -155,3 +155,4 @@ document.getElementById('sendButtonQuestion').addEventListener('click', function
             document.getElementById('responseQuestion').innerText = 'Ocurrió un error. Inténtalo de nuevo.';
         });
 })
+

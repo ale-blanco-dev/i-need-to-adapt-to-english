@@ -35,38 +35,6 @@ function displayDate() {
     document.getElementById('date').value = formattedDate;
 }
 
-const ul = document.getElementById("tagList"),
-    input = document.getElementById("tagInput");
-
-let tags = [];
-
-function createTag() {
-    ul.querySelectorAll("li").forEach(li => li.remove());
-    tags.slice().reverse().forEach(tag => {
-        let liTag = `<li>${tag} <i class="uit uit-multiply" onclick="removeTag('${tag}')"></i></li>`;
-        ul.insertAdjacentHTML("afterbegin", liTag);
-    });
-}
-
-function removeTag(tag) {
-    tags = tags.filter(t => t !== tag);
-    createTag();
-}
-
-function addTag(e) {
-    if (e.key === "Enter" || e.key === ",") {
-        let tag = e.target.value.trim().replace(",", "");
-        if (tag && !tags.includes(tag)) {
-            tags.push(tag);
-            createTag();
-        }
-        e.target.value = "";
-    }
-}
-
-input.addEventListener("keyup", addTag);
-
-
 let pointsWords;
 let pointsPhrase;
 let levelEnglish;
@@ -77,107 +45,79 @@ function validateNewWords() {
 
     let pointsWords;
 
-    if (wordCount < 7) {
-        pointsWords = 0;
-    } else if (wordCount <= 15) {
-        pointsWords = 1;
-    } else if (wordCount <= 22) {
-        pointsWords = 2;
-    } else if (wordCount <= 29) {
-        pointsWords = 3;
-    } else if (wordCount >= 30) {
-        pointsWords = 4;
-    }
-    resultsNewWords.innerText = pointsWords > 0 ? `${pointsWords} punto${pointsWords > 1 ? 's' : ''}` : "";
+    if (wordCount <= 7) pointsWords = 0;
+    else if (wordCount <= 15) pointsWords = 1;
+    else if (wordCount <= 22) pointsWords = 2;
+    else if (wordCount <= 29) pointsWords = 3;
+    else if (wordCount >= 30) pointsWords = 4;
+
+    resultsNewWords.innerText = pointsWords !== undefined ? `${pointsWords} punto${pointsWords !== 1 ? 's' : ''}` : "";
+
 }
 
 validateNewWords();
 
-function SaveNewWords() {
-    const listWords = document.getElementById("tagList");
-    const tagsWord = Array.from(listWords.getElementsByTagName("li")).map(li => li.textContent.trim());
-
-    const wordSaveEnglish = { wordsLearned: tagsWord };
-
-    fetch('https://savewords-lkdliiflpq-uc.a.run.app', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(wordSaveEnglish),
-    })
-        .then(response => response.json())
-        .then(dataWord => {
-            document.getElementById('SaveWords').innerText = 'Datos guardados correctamente';
-            console.log('Success: ', dataWord);
-        })
-        .catch(error => {
-            document.getElementById('SaveWords').innerText = 'Error al guardar los datos';
-            console.error('Error: ', error);
-        });
-}
-
-document.getElementById('submitBtn').addEventListener('click', SaveNewWords);
-
-
 function validatePhrase() {
     const phrase = document.getElementById("phrase").value;
     const resultsPhrase = document.getElementById('resultsPhrase');
-    fetch('/validate-phrase', {
+    const resultPoints = document.getElementById('resultsPoints');
+    fetch('https://issentencecorrectgrammar-lkdliiflpq-uc.a.run.app', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/json'
         },
-        body: new URLSearchParams({
-            'message': phrase
+        body: JSON.stringify({
+            message: phrase
         })
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
     })
-        .then(data => {
-            if (data.error) {
-                throw new Error(data.error);
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-            document.getElementById('resultsPhrase').innerText = data.reply;
-            const resultsText = document.getElementById('resultsPhrase').innerText;
+            return response.json();
+        })
+        .then(data => {
+            resultsPhrase.innerText = data.reply;
+            const resultsText = data.reply;
             const match = resultsText.match(/:\s*(\d+)$/);
-
             if (match) {
                 const number = parseInt(match[1], 10);
-                console.log('Número extraído:', number);
-
                 pointsPhrase = number >= 8 ? 0 :
                     number >= 6 ? 1 :
                         number >= 4 ? 2 :
                             number >= 2 ? 3 : 4;
-
-                console.log('Puntos asignados:', pointsPhrase);
-                document.getElementById('resultsPoints').innerText = "Points: " + pointsPhrase;
+                resultPoints.innerText = "Points: " + pointsPhrase;
             } else {
-                console.log('No se encontró un número después de los dos puntos.');
                 pointsPhrase = 0;
+                resultPoints.innerText = "Ocurrio un problema. Intentalo más tarde";
             }
         })
         .catch(error => {
-            console.error('Error:', error);
             document.getElementById('resultsPhrase').innerText = 'Ocurrió un error. Inténtalo de nuevo.';
         });
-};
+}
+
 document.getElementById('validatePhraseBtn').addEventListener('click', validatePhrase);
 
 async function getStory() {
     try {
-        const response = await fetch('/generate_text');
+        const response = await fetch('https://createstory-lkdliiflpq-uc.a.run.app', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
         const data = await response.json();
-        document.getElementById('story').innerText = data.story;
+        document.getElementById('story').innerText = data.reply;
     } catch (error) {
-        console.error('Error fetching the story:', error);
+        document.getElementById('story').innerText = 'Ocurrió un error. Inténtalo de nuevo.';
     }
 }
 window.onload = getStory;
+
 
 let pointsComprehension;
 
@@ -201,40 +141,32 @@ function validateComprehension() {
 function validateErrorCorrection() {
     const correction = document.getElementById("errorCorrection").value;
     const resultsCorrection = document.getElementById('resultsErrorCorrection');
-    fetch('/validate-mental-health', {
+
+    fetch('https://ishowfeeltodayok-lkdliiflpq-uc.a.run.app', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: new URLSearchParams({
-            'message': correction
-        })
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
+        body: new URLSearchParams({ 'message': correction })
     })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.error) {
                 throw new Error(data.error);
             }
             resultsCorrection.innerText = data.reply;
-            const resultsText = resultsCorrection.innerText;
-            const match = resultsText.match(/:\s*(\d+)$/);
-
-            if (match) {
-                const numberCorrection = parseInt(match[1], 10);
-                console.log('Número extraído:', numberCorrection);
-            } else {
-                console.log('No se encontró un número después de los dos puntos.');
-            }
         })
         .catch(error => {
             console.error('Error:', error);
             resultsCorrection.innerText = 'Ocurrió un error. Inténtalo de nuevo.';
         });
 }
+
 
 document.getElementById('validateMentalHealth').addEventListener('click', validateErrorCorrection);
 
@@ -254,14 +186,12 @@ document.getElementById('additionalForm').addEventListener('submit', function (e
         levelEnglish = 'B2';
     }
 
-    console.log('Nivel de inglés:', levelEnglish);
-
     const formData = {
         date: document.getElementById('date').value,
         level: levelEnglish
     };
 
-    fetch('/submit-form', {
+    fetch('https://resultsformtotallevelenglish-lkdliiflpq-uc.a.run.app', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -271,7 +201,7 @@ document.getElementById('additionalForm').addEventListener('submit', function (e
         .then(response => response.json())
         .then(data => {
             console.log('Success:', data);
-            document.getElementById('response').innerText = 'Datos guardados correctamente. El día de hoy fuiste un nive: ' + levelEnglish;
+            document.getElementById('response').innerText = 'Datos guardados correctamente. El día de hoy fuiste un nivel: ' + levelEnglish;
         })
         .catch((error) => {
             console.error('Error:', error);
