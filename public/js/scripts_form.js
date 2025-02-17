@@ -1,39 +1,64 @@
+// Inicia las funciones cuando el DOM esté completamente cargado
 document.addEventListener("DOMContentLoaded", () => {
     displayDate();
     handleResponsiveChanges();
+    setupClickOutsideAndInputFocus();
+    getStory(); // Asegúrate de que esta función esté definida en tu código
 });
 
+// Verifica si es un dispositivo móvil
+const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+// Alternar el menú solo cuando se hace clic en el ícono
 function toggleMenu() {
-    const form = document.getElementById("additionalForm");
     const menu = document.getElementById("menu");
     const menuIcon = document.querySelector(".menu-icon");
 
     menu.classList.toggle('show');
-    form.classList.remove('show');
-
+    menu.style.display = menu.classList.contains('show') ? 'block' : 'none';
+    document.body.style.overflow = menu.classList.contains('show') ? 'hidden' : 'auto';
     menuIcon.style.color = menu.classList.contains('show') ? '#fff' : '#6f42c1';
 }
 
-
-function handleResponsiveChanges() {
-    const form = document.getElementById("additionalForm");
+// Configuración para ocultar el menú al hacer clic fuera de él o al enfocar en un input (solo en móviles)
+function setupClickOutsideAndInputFocus() {
     const menu = document.getElementById("menu");
+    const menuIcon = document.querySelector(".menu-icon");
 
-    function toggleVisibility() {
-        const isSmallScreen = window.matchMedia("(max-width: 1024px)").matches;
-        form.classList.toggle('show', !isSmallScreen); // Show form if not on small screen
-        menu.classList.toggle('show', isSmallScreen); // Show menu if on small screen
+    // Ocultar menú al hacer clic fuera de él o del ícono
+    document.addEventListener('click', (event) => {
+        if (!menu.contains(event.target) && !menuIcon.contains(event.target)) {
+            closeMenu(menu, menuIcon);
+        }
+    });
+
+    // En dispositivos móviles, oculta el menú al enfocar en un input
+    if (isMobileDevice) {
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', () => closeMenu(menu, menuIcon));
+        });
     }
-
-    toggleVisibility();
-
-    window.addEventListener('resize', toggleVisibility);
 }
 
+// Función auxiliar para cerrar el menú
+function closeMenu(menu, menuIcon) {
+    menu.classList.remove('show');
+    menu.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    menuIcon.style.color = '#6f42c1';
+}
+
+// Función para mostrar la fecha actual en formato YYYY-MM-DD
 function displayDate() {
     const formattedDate = new Date().toISOString().split('T')[0];
     document.getElementById('date').value = formattedDate;
 }
+
+// Aquí deberías definir handleResponsiveChanges y getStory si no están aún definidas.
+// function handleResponsiveChanges() { ... }
+// function getStory() { ... }
+
+
 
 let pointsWords;
 let pointsPhrase;
