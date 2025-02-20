@@ -21,35 +21,30 @@
 </head>
 
 <body>
-    <div class="container">
-        <div class="title">¡Es momento de dominar el inglés!</div>
-        <div class="container">
+    <div class="container-all-traduction">
+        <div class="container-traduction">
             <span class="title-traduce">Traduce aquí tu palabra: <span id="responseSave"></span> </span>
             <form id="my-form">
-                <input type="text" id="my-input" placeholder="Escribe tu palabra aquí" required>
-                <button type="submit" id="sendButton">
-                    <span>Enviar</span>
-                </button>
-
+                <textarea name="hello" id="my-input" cols="30" rows="2" placeholder="Escribe tu palabra aquí" required></textarea>
+                <button type="submit" id="sendButton"><span>Enviar</span></button>
             </form>
             <div class="response" id="response"></div>
         </div>
-        <div class="container">
+        <div class="container-traduction">
             <span class="title-traduce">Añade una frase acorde a la palabra que quieras aprender: </span>
-            <form id="my-form">
-                <input type="text" id="my-input-phrase" placeholder="Escribe tu frase aquí" required>
+            <form id="my-form-phrase">
+                <textarea id="my-input-phrase" cols="30" rows="2" placeholder="Escribe tu frase aquí" required></textarea>
                 <button type="submit" id="sendButtonPhrase"><span>Validar</span></button>
             </form>
-            <div class="response" id="responsePhrase">
-            </div>
+            <div class="response" id="responsePhrase"></div>
         </div>
-        <div class="container"></div>
-        <span class="title-traduce">¿Tienes alguna pregunta sobre el ingles? </span>
-        <form id="my-form">
-            <input type="text" id="my-input-question" placeholder="Escribe tu pregunta aquí" required>
-            <button type="submit" id="sendButtonQuestion"><span>Preguntar</span></button>
-        </form>
-        <div class="response" id="responseQuestion">
+        <div class="container-traduction">
+            <span class="title-traduce">¿Tienes alguna pregunta sobre el inglés? </span>
+            <form id="my-form-question">
+                <textarea id="my-input-question" cols="30" rows="2" placeholder="Escribe tu pregunta aquí" required></textarea>
+                <button type="submit" id="sendButtonQuestion"><span>Preguntar</span></button>
+            </form>
+            <div class="response" id="responseQuestion"></div>
         </div>
     </div>
     <div class="parent">

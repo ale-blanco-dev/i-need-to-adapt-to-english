@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
     displayDate();
-    handleResponsiveChanges();
 });
 
 function toggleMenu() {
@@ -12,22 +11,6 @@ function toggleMenu() {
     form.classList.remove('show');
 
     menuIcon.style.color = menu.classList.contains('show') ? '#fff' : '#6f42c1';
-}
-
-
-function handleResponsiveChanges() {
-    const form = document.getElementById("additionalForm");
-    const menu = document.getElementById("menu");
-
-    function toggleVisibility() {
-        const isSmallScreen = window.matchMedia("(max-width: 1024px)").matches;
-        form.classList.toggle('show', !isSmallScreen); // Show form if not on small screen
-        menu.classList.toggle('show', isSmallScreen); // Show menu if on small screen
-    }
-
-    toggleVisibility();
-
-    window.addEventListener('resize', toggleVisibility);
 }
 
 function displayDate() {

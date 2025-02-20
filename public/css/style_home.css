@@ -16,6 +16,29 @@ body {
     margin: 0 auto;
 }
 
+.container-all-traduction {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 2%;
+}
+
+.container-traduction {
+    padding: 2%;
+    max-width: 600px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    flex: 1 1 300px;
+    margin-bottom: 2%;
+    height: 100%;
+}
+
 .title {
     font-size: 2.5em;
     color: var(--primary-color);
@@ -24,7 +47,7 @@ body {
     font-weight: bold;
 }
 
-#my-form {
+#my-form, #my-form-phrase, #my-form-question {
     padding-top: 1%;
     display: flex;
     flex-direction: column;
@@ -38,6 +61,7 @@ body {
     border-radius: 5px;
     border: 1px solid var(--primary-color);
     font-size: 1em;
+    font-family: Arial, sans-serif;
 }
 
 button {
@@ -87,7 +111,7 @@ button span {
 
 
 .response {
-    margin-top: 20px;
+    margin-top: 10px;
     padding: 10px;
     border: 1px solid var(--primary-color);
     border-radius: 5px;
