@@ -1,22 +1,33 @@
+// Inicia las funciones cuando el DOM esté completamente cargado
 document.addEventListener("DOMContentLoaded", () => {
     displayDate();
 });
 
+// Verifica si es un dispositivo móvil
+const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+// Alternar el menú solo cuando se hace clic en el ícono
 function toggleMenu() {
-    const form = document.getElementById("additionalForm");
     const menu = document.getElementById("menu");
     const menuIcon = document.querySelector(".menu-icon");
 
     menu.classList.toggle('show');
-    form.classList.remove('show');
-
+    menu.style.display = menu.classList.contains('show') ? 'block' : 'none';
+    document.body.style.overflow = menu.classList.contains('show') ? 'hidden' : 'auto';
     menuIcon.style.color = menu.classList.contains('show') ? '#fff' : '#6f42c1';
 }
 
+// Función para mostrar la fecha actual en formato YYYY-MM-DD
 function displayDate() {
     const formattedDate = new Date().toISOString().split('T')[0];
     document.getElementById('date').value = formattedDate;
 }
+
+// Aquí deberías definir handleResponsiveChanges y getStory si no están aún definidas.
+// function handleResponsiveChanges() { ... }
+// function getStory() { ... }
+
+
 
 let pointsWords;
 let pointsPhrase;
