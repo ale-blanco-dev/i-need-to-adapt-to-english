@@ -1,4 +1,4 @@
-const {onRequest} = require("firebase-functions/v2/https");
+const { onRequest } = require("firebase-functions/v2/https");
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
 const { Configuration, OpenAIApi } = require('openai');
@@ -64,10 +64,17 @@ exports.traduce = onRequest(async (req, res) => {
                 return res.status(400).json({ error: 'Invalid request' });
             }
             const user_message = req.body.message;
+            const systemMessage = `Act as an ES↔EN translator. Detect the input language and translate to the opposite.
+            Line 1 = main translation.
+            Line 2 (optional) = alternatives, comma-separated (max 4).
+            Do not use labels, dashes, numbered lists, parentheses, or explanations.
+            If the input is a sentence, return only line 1; if helpful, add line 2 with 1–2 very brief reformulations.
+            Do not translate code/URLs. Be natural and precise.`;
+
             const openaiResponse = await openai.createChatCompletion({
                 model: 'gpt-4o-mini',
                 messages: [
-                    { role: 'system', content: 'Traduce o define la siguiente palabra o frase según su contexto. Si está en inglés, tradúcela al español; si está en español, al inglés. Proporciona otras posibles definiciones o traducciones según el contexto, sin usar introducciones innecesarias.' },
+                    { role: 'system', content: systemMessage },
                     { role: 'user', content: user_message }
                 ],
                 max_tokens: 100,
@@ -88,8 +95,13 @@ exports.isThePhraseContainAWord = onRequest(async (req, res) => {
             }
 
             const userPhraseMessage = req.body.message;
-            const userWordMessage = req.body.word;
-            const systemMessage = `Valida si la frase: '${userPhraseMessage}' contiene la(s) palabra(s): '${userWordMessage}'. Asegúrate de que sea gramaticalmente correcta y sin errores ortográficos. Si es necesario, corrige la frase y tradúcela, añadiendo la traducción entre paréntesis. Evita introducciones innecesarias.`;
+            const systemMessage = `You are an ES↔EN translator and lexicographer. Translate to the opposite language naturally.
+            Output in separate lines (max 4), no bullets or pipes:
+            Translation: …
+            Category: noun | verb | phrase (only if applicable)
+            Alternatives: term1, term2, term3
+            Examples: EN — … | ES — …
+            Rules: each line ≤ 8 o 10 words; alternatives are lemmas only (no parentheses or explanations); one example per language; no prefaces or closers; do not translate code/URLs.`;
 
             const openaiResponse = await openai.createChatCompletion({
                 model: 'gpt-4o-mini',
@@ -117,7 +129,20 @@ exports.validateQuestion = onRequest(async (req, res) => {
             }
 
             const userQuestionMessage = req.body.message;
-            const systemMessage = `Resuelve todas mis dudas sobre el aprendizaje del inglés, incluyendo gramática, ortografía, significado de palabras y expresiones. También ofrece consejos sobre las mejores maneras de aprender el idioma de manera efectiva y mejorar mi comprensión en diferentes contextos.`;
+            const systemMessage = `You are a C1 English sentence corrector and copy editor. Answer in ENGLISH only.
+            Make minimal but decisive edits to reach natural C1 while preserving meaning.
+            Output sections on separate lines:
+            Corrected: …
+                Why: …
+                Alternatives: … ; …
+                Notes: …
+            Rules: Keep it concise (max 6–8 lines). Fix grammar/aspect, articles/determiners, word order,
+            prepositions, collocations, punctuation, cohesion. Prefer the more concise natural option.
+            NEVER write "N/A"; always provide at least one alternative (lighter rephrase or nuance).
+            If the input is already C1, write "Already C1." and still give one alternative.
+            No prefaces/apologies; do not translate code/URLs; keep proper nouns.
+            Default to US English; if the input is clearly UK, stay consistent with UK.`;
+
             const openaiResponse = await openai.createChatCompletion({
                 model: 'gpt-4o-mini',
                 messages: [
@@ -138,7 +163,7 @@ exports.validateQuestion = onRequest(async (req, res) => {
 
 exports.isSentenceCorrectGrammar = onRequest(async (req, res) => {
     cors(req, res, async () => {
-        try {            
+        try {
             const userQuestionPhrase = req.body.message;
             const systemPhraseValidate = 'Correct the sentence for grammar and spelling. If the sentence is correct, reply with two point - espace - zero, like this : 0. Provide the corrected sentence and count all errors (grammar and spelling) accurately in the format: corrected sentence : number';
             const openaiResponse = await openai.createChatCompletion({
@@ -148,7 +173,7 @@ exports.isSentenceCorrectGrammar = onRequest(async (req, res) => {
                     { role: 'user', content: userQuestionPhrase }
                 ],
                 max_tokens: 100
-            }); 
+            });
             const assistant_reply = openaiResponse.data.choices[0]?.message?.content || 'No content';
             return res.status(200).json({ reply: assistant_reply });
         } catch (error) {
@@ -158,9 +183,9 @@ exports.isSentenceCorrectGrammar = onRequest(async (req, res) => {
     });
 });
 
-exports.createStory = onRequest(async (req, res) =>{
-    cors(req, res, async() =>{
-        try{
+exports.createStory = onRequest(async (req, res) => {
+    cors(req, res, async () => {
+        try {
             if (req.method !== 'GET') {
                 return res.status(400).json({ message: 'Método no soportado, debe ser GET' });
             }
@@ -174,15 +199,15 @@ exports.createStory = onRequest(async (req, res) =>{
             });
             const assistant_story = openaiResponse.data.choices[0]?.message?.content;
             return res.status(200).json({ reply: assistant_story })
-        } catch (error){
+        } catch (error) {
             res.status(500).json({ message: 'Error al obtener los datos' });
         }
     });
 });
 
-exports.isHowFeelTodayOk = onRequest(async (req, res) =>{
-    cors(req, res, async() =>{
-        try{
+exports.isHowFeelTodayOk = onRequest(async (req, res) => {
+    cors(req, res, async () => {
+        try {
             userHowFeel = req.body.message;
             const openaiResponse = await openai.createChatCompletion({
                 model: 'gpt-4o-mini',
@@ -194,7 +219,7 @@ exports.isHowFeelTodayOk = onRequest(async (req, res) =>{
             })
             const assistant_howFeel = openaiResponse.data.choices[0]?.message?.content || 'No content';
             return res.status(200).json({ reply: assistant_howFeel })
-        }catch(error){
+        } catch (error) {
             const errorMessage = error.message ? error.message : 'Internal Server Error';
             return res.status(500).json({ error: errorMessage });
         }
@@ -221,17 +246,17 @@ exports.saveWords = onRequest((req, res) => {
     });
 });
 
-exports.resultsFormTotalLevelEnglish = onRequest((req, res) =>{
-    cors(req, res, async () =>{
-        try{
+exports.resultsFormTotalLevelEnglish = onRequest((req, res) => {
+    cors(req, res, async () => {
+        try {
             const dataWord = req.body;
             const resultTotal = await getFirestore()
                 .collection("resultsTotalForm")
                 .add(dataWord);
 
-                res.status(200).json({ message: 'Datos guardados correctamente', id: resultTotal.id });
+            res.status(200).json({ message: 'Datos guardados correctamente', id: resultTotal.id });
 
-        }catch (error){
+        } catch (error) {
             console.error('Error al guardar los datos:', error);
             res.status(500).json({ message: 'Error al guardar los datos' });
         }
