@@ -28,7 +28,6 @@ openSelectedURL("grammar-options-listening");
 toggleMenu("grammar-link-1", "grammar-options-1");
 openSelectedURL("grammar-options-1");
 
-
 document.getElementById('sendButton').addEventListener('click', async (event) => {
     event.preventDefault();
 
@@ -37,7 +36,6 @@ document.getElementById('sendButton').addEventListener('click', async (event) =>
     const responseElement = document.getElementById('response');
     const responseSaveElement = document.getElementById('responseSave');
 
-    // Mostrar loading, añadir clase 'loading' al botón
     sendButton.classList.add('loading');
     sendButton.disabled = true;
 
@@ -73,13 +71,10 @@ document.getElementById('sendButton').addEventListener('click', async (event) =>
         responseElement.innerText = 'Ocurrió un error. Inténtalo de nuevo.';
         responseSaveElement.innerText = 'Error. Revisa con soporte.';
     } finally {
-        // Ocultar loading, eliminar clase 'loading' del botón
         sendButton.classList.remove('loading');
         sendButton.disabled = false;
     }
 });
-
-
 
 document.getElementById('sendButtonPhrase').addEventListener('click', function (event) {
     event.preventDefault();

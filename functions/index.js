@@ -90,10 +90,10 @@ exports.traduce = onRequest(async (req, res) => {
 exports.isThePhraseContainAWord = onRequest(async (req, res) => {
     cors(req, res, async () => {
         try {
-            if (req.method !== 'POST' || !req.body.message || !req.body.word) {
+            if (req.method !== 'POST' || !req.body.message) {
                 return res.status(400).json({ error: 'Invalid request' });
             }
-
+            
             const userPhraseMessage = req.body.message;
             const systemMessage = `You are an ES↔EN translator and lexicographer. Translate to the opposite language naturally.
             Output in separate lines (max 4), no bullets or pipes:
